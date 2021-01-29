@@ -4,8 +4,8 @@ RUN apk add --no-cache bash
 
 RUN npm i -g @nestjs/cli
 
+RUN npm i 
+
 USER node
 
-WORKDIR /app
-
-EXPOSE 3000
+WORKDIR /home/node/app
