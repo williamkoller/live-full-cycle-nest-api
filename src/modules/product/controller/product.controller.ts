@@ -1,5 +1,14 @@
 import { Product } from '@/models/product.model';
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateProductDto } from '../dtos/create-product.dto';
@@ -19,10 +28,14 @@ export class ProductController {
 
   @Get()
   async index(): Promise<Product[]> {
-    return await this.repositoryProd.find();
+    const products = await this.repositoryProd.find();
+    if (products.length === 0) {
+      throw new BadRequestException('No records found');
+    }
+    return products;
   }
 
-  @Put('/:id')
+  @Put(':id')
   async edit(
     @Param('id') id: string,
     @Body() body: UpdateProdutDto,
@@ -35,11 +48,19 @@ export class ProductController {
     });
   }
 
-  @Get('/:id')
+  @Get(':id')
   async show(@Param('id') id: string): Promise<Product> {
     return await this.findById(id);
   }
 
+  @Delete(':id')
+  async delete(@Param('id') id: string): Promise<{ message: string }> {
+    const productId = await this.findById(id);
+    await this.repositoryProd.remove(productId);
+    return {
+      message: 'Product deleted successfully',
+    };
+  }
   private async findById(id: string): Promise<Product> {
     return await this.repositoryProd.findOneOrFail(id);
   }
