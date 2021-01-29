@@ -16,7 +16,7 @@ services:
       - .:/home/node/app
 
   db:
-    build: ./.docker/postgres
+    image: postgres:13.1-alpine
     restart: always
     tty: true
     volumes:
@@ -26,3 +26,5 @@ services:
       POSTGRES_PASSWORD: root
       POSTGRES_DB: nest_api
       PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - 5432:5432
